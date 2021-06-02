@@ -1,0 +1,21 @@
+#!/usr/bin/python
+def main():
+    import sys
+    num = int(sys.argv[1])
+    length = int(sys.argv[3]) if len(sys.argv) > 3 else 10
+    with open(sys.argv[2], 'w') as f:
+        for word in get_random(num, length):
+            f.write(word + '\n')
+
+def get_random(num, length):
+    import random
+    lower_alphabet = [chr(65 + 32 + i) for i in range(26)]
+
+    for i in range(num):
+        word = ''
+        for ci in range(length):
+            word += lower_alphabet[random.randint(0, 25)]
+
+        yield word
+
+main()

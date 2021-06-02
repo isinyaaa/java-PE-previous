@@ -1,0 +1,48 @@
+\documentclass{article}
+
+\usepackage{IMTtikz}
+
+\title{Um breve resultado sobre partições}
+\author{Isabella B.}
+\newtheorem{theorem}{Teorema}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+\DeclareMathOperator{\ex}{ex}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\makeatletter
+\let\oldceil\ceil
+\def\ceil{\@ifstar{\oldceil}{\oldceil*}}
+\makeatother
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\makeatletter
+\let\oldfloor\floor
+\def\floor{\@ifstar{\oldfloor}{\oldfloor*}}
+\makeatother
+
+\begin{document}
+    \maketitle
+    
+    Seja $N$ um conjunto que deve ser particionado em parcelas com, no máximo, $M$ objetos.
+    Denotamos a quantidade de partições atendendo esses requisitos por $p(N, M)$.
+    
+    \begin{theorem}
+        \[ p(N, M) = p(N - M, M) + p(N, M - 1) \]
+    \end{theorem}
+    \begin{proof}
+        Podemos notar que, para qualquer $N\in\mathbb{N}$ temos $p(N, 1) = 1$,
+        já que só existe uma soma única de $N$ parcelas de $1$.
+        Da mesma forma, é possível notar que para qualquer $N\in\mathbb{N}$,
+        temos $p(N, 2)=\ceil{N/2}$.
+        
+        Tomando nosso caso inicial de $M=2$:
+        \[ p(N, 2) = p(N - 2, 2) + p(N, 1) \rightarrow p(N, 2) - p(N - 2, 2) = \ceil{N/2} - \ceil{(N - 2)/2} = 1 = p(N, 1), \]
+        o que é claramente verdadeiro.
+
+        Portanto, por indução, temos que:
+        \[ p(N, k + 1) - p(N - (k + 1), k + 1) = p(N, k) \]
+
+
+    \end{proof}
+\end{document}

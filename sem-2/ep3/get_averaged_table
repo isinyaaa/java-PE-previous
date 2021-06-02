@@ -1,0 +1,27 @@
+#!/usr/bin/python
+def main():
+    import sys
+    #with open(sys.argv[1]) as f:
+    first = True
+    s = last_val = count = 0
+    #for line in f.readlines():
+    for line in sys.argv[1:]:
+        val, time = line.split(',')
+        time = float(time)
+        if first:
+            first = False
+            last_val = val
+        if last_val == val:
+            s += time
+            count += 1
+            continue
+        elif count > 0:
+            result = s/count
+            sys.stdout.write("{0},{1:.3f}\n".format(last_val, result))
+            last_val = val
+            s = count = 0
+    if count > 0:
+        result = s/count
+        sys.stdout.write("{0},{1:.3f}\n".format(last_val, result))
+
+main()

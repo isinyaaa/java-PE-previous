@@ -1,0 +1,7 @@
+1 geral
+2 geral
+3 idoso
+4 idoso
+5 idoso
+6 geral
+7 idoso

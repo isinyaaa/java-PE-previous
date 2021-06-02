@@ -1,0 +1,184 @@
+\documentclass[12pt,reqno]{amsart}
+\usepackage{geometry}
+\geometry{left=25mm,right=25mm, top=23mm, bottom=25mm}
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{portuguese}
+\usepackage{textcomp}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{fullpage}
+\usepackage{psfrag}
+\usepackage{srcltx}
+
+\usepackage[hidelinks,
+            colorlinks=true,
+            linkcolor=magenta]{hyperref}
+\usepackage{fontspec}
+\setmonofont[]{Iosevka}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,breaklines=true,numbers=left}
+\usepackage{pgfplots, pgfplotstable, booktabs}
+\pgfplotsset{compat=1.5}
+\usepackage{siunitx}
+\DeclareSIUnit{\sample}{sample}
+
+\makeatletter
+\renewcommand{\labelenumi}{\theenumi.}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\let\eps\varepsilon
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{setspace}
+\onehalfspacing
+\renewcommand{\baselinestretch}{1.2}
+
+\title[]{Análise da eficiência do algoritmo de merge sort}
+\author{Isabella Basso do Amaral --- 11810773}
+
+\thanks{isabellabdoamaral@usp.br}
+
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+
+%\indent{\bf Aluna:} Isabella Basso do Amaral\\
+%\indent{\bf Orientador:} Guilherme Oliveira Mota
+
+
+\section{Introdução}
+Esta é uma análise de eficiência simplificada, utilizando o método
+de \textit{doubling}\footnote{Aviso:
+A implementação do algoritmo, gerador e scripts utilizados para análise
+de dados foram feitos pela autora e não serão discutidos em profundidade
+no presente trabalho.
+}, conforme fora estudado na disciplina CCM0128, do curso de Ciências
+Moleculares da USP.
+
+\section{Método}
+\subsection{\textit{doubling}}
+Na presente análise utilizaremos o método de \textit{doubling}, o qual
+nos dá uma estimativa da complexidade
+do algoritmo estudado através do processo de dobrar a quantidade de
+entradas a cada iteração, de tal forma que facilita a visualização
+da taxa de crescimento da complexidade algorítmica do que estamos
+analisando. I.e. para inputs sucessivos de $1, 2$ e $4$, para uma
+algoritmo com complexidade de ordem $\mathcal{O}(n)$ esperamos
+um resultado com tempos $\alpha, 2\alpha$ e $4\alpha$, respectivamente,
+enquanto que para um algoritmo com complexidade de ordem $\mathcal{O}(n^2)$
+esperamos tempos de $\alpha, 4\alpha$ e $16\alpha$.
+
+\subsection{Medidas}
+Para que não haja \textit{overhead} da função de geração (veja \ref{code:python})
+nos tempos medidos, criaremos os arquivos a serem organizados de antemão.
+
+Em cada passo do \textit{doubling} realizaremos 100 medições, tirando sua
+média ao final (veja \ref{code:bash}).
+
+\section{Resultados}
+Podemos ver que o script gerou os seguintes dados no arquivo \texttt{.csv}.
+
+\begin{table}[h!]
+  \centering
+  \caption{\textit{runtime} do \texttt{merge sort}}
+  \pgfplotstabletypeset[ multicolumn names=l, % allows to have multicolumn names
+  col sep=comma, % the seperator in our .csv file
+    display columns/0/.style={ column name={sample size}, % name of first column
+      column type={S},
+      string type}, % use siunitx for formatting
+    display columns/1/.style={ column name={avg time},
+      column type={S},
+      string type},
+    every head row/.style={
+      before row={\toprule}, % have a rule at top
+      after row={\midrule} % rule under units
+    },
+    every last row/.style={after row=\bottomrule}, % rule at bottom
+    ]{results.csv} % filename/path to file
+\end{table}
+
+\begin{center}
+  \begin{tikzpicture}
+    \begin{axis}[
+      title={\textit{doubling method (runtime)}},
+      xlabel={amostra},
+      ylabel={tempo médio para 100 iterações [s]}
+    ]
+      \addplot table [x=sample size, y=avg time, col sep=comma] {results.csv};
+    \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+O que se aproxima de uma reta com coeficiente angular aproximado
+\[\alpha=\dfrac{1.398-0.195}{(1.28-0.01)\cdot10^6}\approx\SI[per-mode=symbol]{0.95}{\nano\second\per\sample} \]
+
+\section{Discussão}
+\subsection{Complexidade}
+Dado que o \texttt{runtime} do algoritmo aproxima uma reta, podemos inferir que
+sua complexidade é $\mathcal{O}(n)$.
+
+\subsection{Estabilidade}
+Observando a função \texttt{merge} (linhas 19--44 do arquivo \ref{code:java}),
+nota-se que, enquanto o índice \texttt{k} aumenta, o índice \texttt{i}
+que acompanha o array inferior é comparado ao índice \texttt{j}
+que acompanha o array superior e, dessa forma, para garantir
+estabilidade é necessário que preservemos essa relação.
+
+No presente trecho (retirado do mesmo arquivo) notamos que, conforme desejado,
+o array inferior é favorecido em casos de igualdade e, conforme iteramos com
+o índice \texttt{k} aumentando, a implementação é estável.
+
+\begin{lstlisting}[firstnumber=37]
+            if (lower[i].compareTo(upper[j]) <= 0)
+                merger[k] = lower[i++];
+            else
+                merger[k] = upper[j++];
+\end{lstlisting}
+
+
+\clearpage
+\section{Apêndices}
+
+\subsection{Apêndice A}
+\label{code:java}
+
+Arquivo de \texttt{merge sort} (em Java, reescrito por simplicidade).
+
+\lstset{language=Java}
+\lstinputlisting{minimalMergeSort.java}
+
+\clearpage
+\subsection{Apêndice B}
+\label{code:python}
+
+Arquivo gerador de strings aleatórias (em Python).
+
+\lstset{language=Python}
+\lstinputlisting{str_gen}
+
+\clearpage
+\subsection{Apêndice C}
+\label{code:python2}
+
+Arquivo de média (em Python).
+
+\lstinputlisting{get_averaged_table}
+
+\clearpage
+\subsection{Apêndice D}
+\label{code:bash}
+
+Script de \textit{timing}.
+
+\lstset{language=Bash}
+\lstinputlisting{time.sh}
+
+\end{document}
