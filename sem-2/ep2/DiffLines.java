@@ -1,4 +1,4 @@
-// a interpretação é deixada ao cargo do leitor
+// a interpretação é deixada a cargo do leitor
 
 public class DiffLines {
     public static void main(String[] args) {
@@ -20,7 +20,7 @@ public class DiffLines {
                 // this was the best part :cry:
                 if (x[i].equals(y[j]))
                     opt[i][j] = opt[i+1][j+1] + 1;
-                else 
+                else
                     opt[i][j] = Math.max(opt[i+1][j], opt[i][j+1]);
             }
         }
@@ -37,15 +37,13 @@ public class DiffLines {
             else line2 += "*" + y[j++] + "* ";
         }
 
-        // print.
+        // dump out one remainder of one string if the other is exhausted
+        while (i < m || j < n) {
+            if      (i == m) line2 += y[j++] + " ";
+            else if (j == n) line1 += x[i++] + " ";
+        }
+
         StdOut.println(line1);
         StdOut.println(line2);
-
-        // dump out one remainder of one string if the other is exhausted
-        //while (i < m || j < n) {
-        //    if      (i == m) StdOut.println("> " + y[j++]);
-        //    else if (j == n) StdOut.println("< " + x[i++]);
-        //}
-
     }
 }
